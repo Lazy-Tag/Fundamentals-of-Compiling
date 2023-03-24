@@ -1,0 +1,57 @@
+%option noyywrap
+%option yylineno
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int column = 1;
+%}
+
+%%
+
+main|auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|volatile|do|if|while|static {
+    printf("%s: K, (%d, %d)\n", yytext, yylineno, column);
+    column += strlen(yytext);
+}
+
+[a-zA-Z_][a-zA-Z0-9_]* {
+    printf("%s: I, (%d, %d)\n", yytext, yylineno, column);
+    column += strlen(yytext);
+}
+
+[\+\-\*/%&|\^~!<>=]=?|\|\||&&|<<|>>|\+\+|--|->|\. {
+    printf("%s: O, (%d, %d)\n", yytext, yylineno, column);
+    column += strlen(yytext);
+}
+
+[{}()\[\],.;:] {
+    printf("%s: D, (%d, %d)\n", yytext, yylineno, column);
+    column += strlen(yytext);
+}
+
+(0[xX][0-9A-Fa-f]+)|(0[0-7]+)|[0-9]+|([0-9]*\.[0-9]+|[0-9]+\.[0-9]*)|'([^'\n]|\\')*'|true|false {
+    printf("%s: C, (%d, %d)\n", yytext, yylineno, column);
+    column += strlen(yytext);
+}
+
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/|"//"(.)* {}
+
+[ \t]+ {
+    column += strlen(yytext);
+}
+
+[\n|\r] {
+    column = 1;
+}
+
+[0-9][a-zA-Z0-9_]*|. {
+    printf("%s: T, (%d, %d)\n", yytext, yylineno, column);
+    column += strlen(yytext);
+}
+%%
+
+int main(int argc, char *argv[]) {
+    yyin = fopen(argv[1], "r");
+    yylex();
+    return 0;
+}
