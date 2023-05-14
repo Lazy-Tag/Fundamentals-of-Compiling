@@ -19,9 +19,8 @@ FILE *ft, *fd;
 %token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET SEMICOLON COMMA
 %token CONST IF ELSE WHILE BREAK CONTINUE RETURN INT VOID
 %token ERROR
+%left LOWER_THAN_ELSE
 
-%left IF
-%left ELSE
 %%
 
 CompUnit:
@@ -282,6 +281,12 @@ FuncFParam:
         	fprintf (fd, "%s %s %s %s %s -> FuncFParam\n"
         		, str[$1], str[$2], str[$3], str[$4], str[$5]);
 	}
+	| INT Ident LBRACKET error RBRACKET array {
+		$$ = ++ cnt;
+		strcpy(str[$$], "FuncFParam");
+        	fprintf (fd, "%s %s %s %s %s -> FuncFParam\n"
+        		, str[$1], str[$2], str[$3], str[$4], str[$5]);
+	}
 	| empty {
 		$$ = ++ cnt;
 		strcpy(str[$$], "FuncFParam");
@@ -340,10 +345,10 @@ Stmt:
 		strcpy(str[$$], "Stmt");
         	fprintf (fd, "%s -> Stmt\n", str[$1]);
 	}
-	| IF LPAREN Cond RPAREN Stmt %prec IF {
+	| IF LPAREN Cond RPAREN Stmt %prec IF{
 		$$ = ++ cnt;
 		strcpy(str[$$], "Stmt");
-        	fprintf ("fd, %s %s %s %s %s -> Stmt\n"
+        	fprintf (fd, "%s %s %s %s %s -> Stmt\n"
         		, str[$1], str[$2], str[$3], str[$4], str[$5]);
 	}
 	| IF LPAREN Cond RPAREN Stmt ELSE Stmt {
