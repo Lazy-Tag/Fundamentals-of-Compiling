@@ -24,17 +24,17 @@ int main () {
         printf(s);
     }
     printf(s);
-    
+
     int i = 0, j = 0;
     while (i <= N) {
         if (i == 1) {
             i = i + 1;
             continue;
         }
-        if (i == N) 
+        if (i == N)
             break;
         printf(i);
-        i = i + 1;  
+        i = i + 1;
     }
     int b[N][N * 2];
     i = 1;
